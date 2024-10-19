@@ -1,4 +1,3 @@
-#![feature(once_cell_get_mut)]
 #[allow(dead_code)]
 mod aptx;
 
