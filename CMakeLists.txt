@@ -21,8 +21,6 @@ add_custom_target(
 add_custom_target(
     ${PROJECT_NAME}_server ALL
     COMMAND ${DOCKER_EXECUTABLE} run --rm -v "${CMAKE_CURRENT_SOURCE_DIR}/server:/server" -w "/server" -v "${CMAKE_CURRENT_BINARY_DIR}/cargo:/root/.cargo" ${PROJECT_NAME} cargo build --release
-    COMMAND touch ${CMAKE_CURRENT_BINARY_DIR}/cargo_target_directory
-    COMMAND ${DOCKER_EXECUTABLE} run --rm -v "${CMAKE_CURRENT_SOURCE_DIR}/server:/server" -w "/server" -v /var/run/docker.sock:/var/run/docker.sock -v "${CMAKE_CURRENT_BINARY_DIR}/cargo_target_directory:/cargo_target_directory" ${PROJECT_NAME} sh -c \"cross metadata --format-version 1 | jq -r '.target_directory' >/cargo_target_directory\"
     DEPENDS ${PROJECT_NAME}
 )
 
@@ -43,12 +41,12 @@ add_custom_target(
 # Create the gradlew script for Android project
 add_custom_target(
     ${PROJECT_NAME}_android_gradlew ALL
-    COMMAND ${DOCKER_EXECUTABLE} run --rm -u gradle -v "${CMAKE_CURRENT_SOURCE_DIR}:/app" -w "/app" -v "${CMAKE_CURRENT_BINARY_DIR}/cargo_target_directory:/cargo_target_directory" gradle gradle wrapper
+    COMMAND ${DOCKER_EXECUTABLE} run --rm -u gradle -v "${CMAKE_CURRENT_SOURCE_DIR}:/app" -w "/app" gradle gradle wrapper
 )
 
 # Build the Android APK
 add_custom_target(
     ${PROJECT_NAME}_android_apk ALL
-    COMMAND ${DOCKER_EXECUTABLE} run --rm -v "${CMAKE_CURRENT_SOURCE_DIR}:/app" -w "/app" -v "${CMAKE_CURRENT_BINARY_DIR}/cargo_target_directory:/cargo_target_directory" mobiledevops/android-sdk-image:34.0.1 ./gradlew build
+    COMMAND ${DOCKER_EXECUTABLE} run --rm -v "${CMAKE_CURRENT_BINARY_DIR}:/build" -v "${CMAKE_CURRENT_SOURCE_DIR}:/app" -w "/app" -v "${CMAKE_CURRENT_SOURCE_DIR}/server/target:/target" mobiledevops/android-sdk-image:34.0.1 ./gradlew build
     DEPENDS ${PROJECT_NAME}_android_native ${PROJECT_NAME}_android_gradlew
 )
