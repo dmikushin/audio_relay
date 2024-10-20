@@ -1,25 +1,18 @@
-### Stream audio from the pc to the phone
-Ultra low latency audio relay
+# Stream audio from the PC to the Android phone
 
-### Build server
-```bash
-cd server && cargo b -r
+Stream audio from the PC to the Android phone with an ultra low latency audio relay.
+
+This repository provides the PC audio forwarder and listening server in Rust. Also an Android app in Java is provided, with an audio receiver implemented as a native library in Rust.
+
+
+## Building
+
+The build is performed in Docker containers, and is entirely orchestrated by a CMake build system:
+
+```
+mkdir build
+cd build
+cmake ..
+make
 ```
 
-### Install service
-```bash
-cargo install --path server
-cp server/pcstream.service /etc/systemd/user/pcstream.service
-systemctl enable --user pcstream.service
-```
-
-### Build android lib
-```bash
-cd server
-cross b -r --target=aarch64-linux-android
-```
-
-### Build apk + android lib
-```bash
-./gradlew build
-```
