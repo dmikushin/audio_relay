@@ -13,7 +13,7 @@ endif()
 # Build the Docker container used for all targets below
 add_custom_target(
     ${PROJECT_NAME}
-    COMMAND ${DOCKER_EXECUTABLE} build -t ${PROJECT_NAME} -f ${CMAKE_CURRENT_SOURCE_DIR}/docker/Dockerfile .
+    COMMAND ${DOCKER_EXECUTABLE} build -t ${PROJECT_NAME} -f ${CMAKE_CURRENT_SOURCE_DIR}/docker/Dockerfile ${CMAKE_CURRENT_SOURCE_DIR}/docker
 )
 
 # Build & install the server
